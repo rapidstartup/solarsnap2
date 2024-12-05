@@ -1,6 +1,4 @@
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
-import { useMutation } from '../convex/_generated/react';
-import { useUser } from '@clerk/clerk-react';
 import {
   SolarReportData,
   BuildingInsightsResponse,
@@ -107,8 +105,7 @@ export async function downloadGeoTIFF(url: string): Promise<GeoTiff> {
 
 export async function getSolarData(
   latitude: number,
-  longitude: number,
-  address: string
+  longitude: number
 ): Promise<SolarReportData> {
   try {
     const location = new google.maps.LatLng(latitude, longitude);
@@ -155,3 +152,4 @@ export async function getSolarData(
     console.error('Error fetching solar data:', error);
     throw error;
   }
+}
