@@ -11,7 +11,7 @@ execSync('npx convex dev --once', {
   env: {
     ...process.env,
     CONVEX_DEPLOYMENT_URL: process.env.VITE_CONVEX_URL,
-    NODE_ENV: 'production'
+    NODE_ENV: 'development'
   },
   cwd: projectRoot
 });
