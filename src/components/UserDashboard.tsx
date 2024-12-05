@@ -1,22 +1,39 @@
-import React from 'react';
-import { useQuery } from '../convex/_generated/react';
-import { User } from '@clerk/clerk-react';
+import { useQuery } from 'convex/react';
+import { useUser } from '@clerk/clerk-react';
 import { Search as SearchType, SolarAnalysis } from '../types/convex';
 import { Search, Sun, MapPin } from 'lucide-react';
+import { api } from '../../convex/_generated/api';
+import { Id } from '../../convex/_generated/dataModel';
 
 interface SearchWithAnalysis extends SearchType {
   analysis?: SolarAnalysis;
+  _id: Id<"searches">;
 }
 
-export default function UserDashboard({ user }: { user: User }) {
-  const searches = useQuery('searches:getUserSearches', { userId: user.id });
-  const analyses = searches?.map(search => 
-    useQuery('solarAnalyses:getAnalysisBySearchId', { searchId: search._id })
-  );
+export default function UserDashboard() {
+  const { user } = useUser();
+  const searches = useQuery(api.searches.getUserSearches, { 
+    userId: user?.id ?? "" 
+  });
+
+  // Get first 10 analyses (or however many you want to show)
+  const analysis0 = useQuery(api.solarAnalyses.getAnalysisBySearchId, { 
+    searchId: searches?.[0]?._id ?? "" as Id<"searches"> 
+  });
+  const analysis1 = useQuery(api.solarAnalyses.getAnalysisBySearchId, { 
+    searchId: searches?.[1]?._id ?? "" as Id<"searches"> 
+  });
+  const analysis2 = useQuery(api.solarAnalyses.getAnalysisBySearchId, { 
+    searchId: searches?.[2]?._id ?? "" as Id<"searches"> 
+  });
+
+  // Combine analyses into array and filter out null values
+  const analyses = [analysis0, analysis1, analysis2]
+    .map(analysis => analysis || undefined);
 
   const searchesWithAnalyses: SearchWithAnalysis[] = searches?.map((search, index) => ({
     ...search,
-    analysis: analyses?.[index]
+    analysis: analyses[index]
   })) || [];
 
   if (!searches) {
