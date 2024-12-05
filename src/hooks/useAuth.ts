@@ -1,20 +1,25 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '../convex/_generated/react';
-import { useConvexAuth } from 'convex/react';
+import { useMutation } from 'convex/react';
+import { useSignIn, useSignUp } from '@clerk/clerk-react';
+import { api } from '../../convex/_generated/api';
 
 export function useAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { signIn: convexSignIn, signUp: convexSignUp } = useConvexAuth();
-  const createProfile = useMutation('auth:createProfile');
+  const { signIn } = useSignIn();
+  const { signUp } = useSignUp();
+  const createProfile = useMutation(api.auth.createProfile);
 
-  const signIn = async (email: string, password: string) => {
+  const handleSignIn = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      await convexSignIn({ email, password });
+      await signIn?.create({
+        identifier: email,
+        password
+      });
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign in');
@@ -23,12 +28,17 @@ export function useAuth() {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const handleSignUp = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const userId = await convexSignUp({ email, password });
-      await createProfile({ userId, email });
+      const result = await signUp?.create({
+        emailAddress: email,
+        password
+      });
+      if (result?.createdUserId) {
+        await createProfile({ userId: result.createdUserId, email });
+      }
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign up');
@@ -38,8 +48,8 @@ export function useAuth() {
   };
 
   return {
-    signIn,
-    signUp,
+    signIn: handleSignIn,
+    signUp: handleSignUp,
     isLoading,
     error
   };
