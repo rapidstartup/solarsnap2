@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'convex/react';
-import { useSignIn, useSignUp } from '@clerk/clerk-react';
+import { useSignIn, useSignUp, useUser } from '@clerk/clerk-react';
 import { api } from '../../convex/_generated/api';
 
 export function useAuth() {
@@ -10,6 +10,7 @@ export function useAuth() {
   const navigate = useNavigate();
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
+  const { user } = useUser();
   const createProfile = useMutation(api.auth.createProfile);
 
   const handleSignIn = async (email: string, password: string) => {
@@ -51,6 +52,7 @@ export function useAuth() {
     signIn: handleSignIn,
     signUp: handleSignUp,
     isLoading,
-    error
+    error,
+    user
   };
 }
