@@ -27,6 +27,8 @@ export function useSolarData() {
           address,
           latitude,
           longitude,
+          createdAt: Date.now(),
+          isClaimed: false
         });
 
         if (searchId) {
@@ -34,6 +36,7 @@ export function useSolarData() {
             searchId,
             ...solarData,
             rawData: solarData.rawData,
+            createdAt: Date.now()
           });
         }
       }

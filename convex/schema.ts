@@ -29,7 +29,7 @@ export default defineSchema({
     costSavings: v.optional(v.string()),
     carbonOffset: v.optional(v.string()),
     installationCost: v.optional(v.string()),
-    rawData: v.optional(v.any()),
+    rawData: v.any(),
     createdAt: v.number(),
   }).index('by_search_id', ['searchId']),
 });
