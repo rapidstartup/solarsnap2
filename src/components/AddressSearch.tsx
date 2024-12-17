@@ -16,7 +16,11 @@ export default function AddressSearch({ onAddressSelect }: Props) {
     setValue,
     clearSuggestions,
   } = usePlacesAutocomplete({
-    requestOptions: { componentRestrictions: { country: 'us' } },
+    requestOptions: { 
+      componentRestrictions: { 
+        country: ['us', 'au', 'gb', 'nl', 'dk'] 
+      } 
+    },
     debounce: 300,
   });
 
